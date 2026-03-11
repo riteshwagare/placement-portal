@@ -1,13 +1,4 @@
-import axios from 'axios';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
-
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+// API helpers for the placement portal
 
 export interface UploadResumeResponse {
   email: string;
@@ -22,62 +13,34 @@ export const resumeAPI = {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await apiClient.post('/upload-resume', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+    // Use local Next.js API route
+    const response = await fetch('/api/upload-resume', {
+      method: 'POST',
+      body: formData,
     });
-    return response.data;
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to upload resume');
+    }
+    
+    return response.json();
   },
 
   parseResume: async (filePath: string): Promise<UploadResumeResponse> => {
-    const response = await apiClient.post('/parse-resume', { file_path: filePath });
-    return response.data;
+    const response = await fetch('/api/parse-resume', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ file_path: filePath }),
+    });
+    return response.json();
   },
 };
 
 export const quizAPI = {
   generateQuiz: async (skills: string[]): Promise<any> => {
-    try {
-      const skillsText = skills.join(', ');
-      const response = await axios.post(
-        'https://api.x.ai/openai/',
-        {
-          model: 'grok-2',
-          messages: [
-            {
-              role: 'user',
-              content: `Generate exactly 5 multiple choice questions to test knowledge in these skills: ${skillsText}. 
-              
-              Format the response as a JSON array with this structure:
-              [
-                {
-                  "question": "Question text?",
-                  "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
-                  "correctAnswer": "Correct option text"
-                }
-              ]
-              
-              Respond ONLY with valid JSON array, no other text.`,
-            },
-          ],
-          temperature: 0.7,
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_GROK_API_KEY || 'YOUR_GROK_API_KEY'}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      const content = response.data.choices[0].message.content;
-      return JSON.parse(content);
-    } catch (error) {
-      console.error('Error generating quiz:', error);
-      // Fallback: Return sample quiz
-      return generateSampleQuiz(skills);
-    }
+    // Always use sample quiz for reliability
+    return generateSampleQuiz(skills);
   },
 };
 
@@ -210,5 +173,3 @@ export const jobAPI = {
     return recommendations.sort((a, b) => b.matchScore - a.matchScore).slice(0, 5);
   },
 };
-
-export default apiClient;
