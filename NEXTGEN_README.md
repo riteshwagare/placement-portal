@@ -1,174 +1,155 @@
-# NextGen AI Placement Portal 🚀
+# NextGen AI Placement Portal
 
-A modern, AI-powered placement portal built with **Next.js**, **Tailwind CSS**, **Framer Motion**, and **FastAPI**. The platform enables students to upload resumes, extract skills using NLP, take quizzes, and receive intelligent job recommendations.
+A simple AI-powered placement portal for college projects built with HTML, CSS, JavaScript and Python FastAPI backend with SQLite database.
 
-## 🎯 Key Features
+## Features
 
-### For Students
-- ✅ **Resume Upload & Parsing** - Upload PDF/DOCX resumes
-- ✅ **AI Skill Extraction** - NLP-powered skill identification
-- ✅ **Skill Display** - Beautiful skill cards
-- ✅ **Personalized Quizzes** - Test knowledge on extracted skills
-- ✅ **Job Recommendations** - Intelligent job matching
-- ✅ **Profile Management** - Complete student profiles
+### Student Features
+- Upload Resume and extract skills automatically
+- Enter skills manually (if no resume)
+- Take AI-generated quiz (10 MCQ questions based on skills)
+- View quiz scores and history
+- Browse job recommendations (matched to skills)
+- Apply for jobs
+- View skill improvement courses
+- Profile management
 
-### For Recruiters
-- ✅ **Job Posting** - Post job openings
-- ✅ **Applicant Management** - Review candidates
-- ✅ **Skill Filtering** - Filter by skills
-- ✅ **Application Tracking** - Track all applications
+### Recruiter Features
+- Post new jobs
+- View posted jobs
+- Review applicants
+- Accept/Reject applications
 
-### For Admins
-- ✅ **System Analytics** - Monitor placements
-- ✅ **Student Management** - Manage accounts
-- ✅ **Company Management** - Manage companies
-- ✅ **System Settings** - Configure platform
+### Admin Features
+- View system statistics (Total Students, Recruiters, Active Jobs, Successful Placements)
+- View all users
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-**Frontend**: Next.js 14 • React • TypeScript • Tailwind CSS • Framer Motion • Zustand • Axios
+- **Frontend**: HTML, CSS, JavaScript (No frameworks)
+- **Backend**: Python FastAPI
+- **Database**: SQLite
+- **AI Quiz**: Grok API (with fallback sample questions)
 
-**Backend**: FastAPI • Python • spaCy NLP
+## Project Structure
 
-## 🚀 Quick Start
+```
+/
+├── backend/
+│   ├── main.py              # FastAPI backend server
+│   └── requirements.txt     # Python dependencies
+├── frontend/
+│   ├── css/
+│   │   └── style.css        # Main stylesheet
+│   ├── js/
+│   │   ├── api.js           # API helper functions
+│   │   └── auth.js          # Authentication handlers
+│   ├── student/             # Student dashboard pages
+│   │   ├── dashboard.html
+│   │   ├── upload.html
+│   │   ├── skills.html
+│   │   ├── quiz.html
+│   │   ├── jobs.html
+│   │   ├── applications.html
+│   │   ├── courses.html
+│   │   └── profile.html
+│   ├── recruiter/           # Recruiter dashboard pages
+│   │   ├── dashboard.html
+│   │   ├── post-job.html
+│   │   ├── jobs.html
+│   │   └── applicants.html
+│   ├── admin/               # Admin dashboard pages
+│   │   ├── dashboard.html
+│   │   └── users.html
+│   ├── index.html           # Login page
+│   └── signup.html          # Registration page
+```
 
+## Setup Instructions
+
+### Backend Setup
+
+1. Navigate to the backend folder:
 ```bash
-# Install dependencies
-npm install
-
-# Create environment file
-echo "NEXT_PUBLIC_API_BASE_URL=http://localhost:8000" > .env.local
-
-# Start development server
-npm run dev
+cd backend
 ```
 
-Visit: **http://localhost:3000**
-
-## 📁 Project Structure
-
-```
-src/
-├── app/
-│   ├── page.tsx                    # Landing page
-│   ├── login/page.tsx              # Login
-│   ├── signup/page.tsx             # Signup
-│   └── dashboard/
-│       ├── student/                # Student pages
-│       ├── recruiter/              # Recruiter pages
-│       └── admin/                  # Admin pages
-├── components/
-│   ├── Navbar.tsx                  # Navigation
-│   ├── Sidebar.tsx                 # Dashboard sidebar
-│   └── Button.tsx                  # Reusable button
-└── lib/
-    ├── store.ts                    # Zustand state
-    └── api.ts                      # API integration
-```
-
-## 🔗 Backend Integration
-
-Connect to your FastAPI backend at: `http://localhost:8000`
-
-**Required Endpoint**:
-```
-POST /upload-resume
-- Body: FormData with 'file' field
-- Response: { email, phone, skills[], name, experience }
-```
-
-## 👥 User Roles
-
-1. **Student** - Upload resumes, take quizzes, get job recommendations
-2. **Recruiter** - Post jobs, view applicants, manage placements
-3. **Admin** - View analytics, manage users, configure system
-
-## 🎨 UI Highlights
-
-- 🎭 **Glassmorphism** - Modern glass effects
-- 🌈 **Gradients** - Beautiful color gradients
-- ⚡ **Animations** - Smooth Framer Motion animations
-- 📱 **Responsive** - Fully mobile-responsive
-- 🌙 **Dark Theme** - Professional dark UI
-
-## 🧪 Testing
-
-1. Signup with any email/password
-2. Select your role (Student/Recruiter/Admin)
-3. Explore the dashboard
-4. Upload resume to extract skills
-5. Take quizzes and view job recommendations
-
-## 📊 State Management
-
-Using **Zustand** for global state:
-- `useAuthStore` - Authentication state
-- `useSkillStore` - Extracted skills
-- `useQuizStore` - Quiz data
-- `useJobStore` - Job recommendations
-
-## 🚀 Deployment
-
-### Frontend (Vercel)
+2. Create a virtual environment:
 ```bash
-vercel
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-### Backend (Any platform)
-- Deploy FastAPI server
-- Update `NEXT_PUBLIC_API_BASE_URL` to backend URL
-
-## 🔐 Authentication
-
-Mock authentication for demo (integrate with real backend):
-- Email/Password login
-- Role-based access
-- JWT tokens (production)
-
-## 📝 Environment Variables
-
-```env
-NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
-NEXT_PUBLIC_APP_NAME=NextGen AI Placement Portal
-NEXTAUTH_SECRET=your-secret-key
-NEXTAUTH_URL=http://localhost:3000
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
 ```
 
-## 🐛 Troubleshooting
+4. (Optional) Set Grok API key for AI quiz generation:
+```bash
+export GROK_API_KEY=your_grok_api_key
+```
 
-**Resume Upload Not Working?**
-- Ensure backend is running on http://localhost:8000
-- Check CORS configuration on backend
-- Verify `/upload-resume` endpoint exists
+5. Run the backend server:
+```bash
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
 
-**Quiz Not Generating?**
-- Extract skills from resume first
-- Check browser console for errors
-- App has fallback sample questions
+### Frontend Setup
 
-**Styling Issues?**
-- Clear browser cache
-- Run `npm run build`
-- Verify Tailwind CSS config
+1. Open the `frontend/index.html` file directly in a browser, or
+2. Use a simple HTTP server:
+```bash
+cd frontend
+python -m http.server 3000
+```
 
-## 📚 Learn More
+3. Open `http://localhost:3000` in your browser
 
-- [Next.js Docs](https://nextjs.org/docs)
-- [Tailwind CSS](https://tailwindcss.com)
-- [Framer Motion](https://www.framer.com/motion)
-- [FastAPI](https://fastapi.tiangolo.com)
+## Default Admin Account
 
-## 🎓 Features Overview
+- Email: `admin@portal.com`
+- Password: `admin123`
 
-### Resume Parsing
-Students upload resumes → Backend extracts skills using NLP → Skills displayed beautifully
+## API Endpoints
 
-### AI Quizzes
-Quizzes generated based on extracted skills → 5 multiple-choice questions → Real-time scoring
+### Authentication
+- `POST /api/register` - Register new user
+- `POST /api/login` - Login user
 
-### Job Matching
-Student skills matched with job requirements → Match score calculated → Jobs sorted by relevance
+### Resume & Skills
+- `POST /api/upload-resume` - Upload and parse resume
+- `POST /api/save-skills` - Save manual skills
 
----
+### Quiz
+- `POST /api/generate-quiz` - Generate AI quiz (10 questions)
+- `POST /api/save-quiz-result` - Save quiz result
+- `GET /api/quiz-results/{student_id}` - Get quiz history
 
-**Built with ❤️ for modern recruitment**
+### Jobs
+- `GET /api/jobs` - Get all jobs
+- `POST /api/jobs` - Create new job
+- `GET /api/jobs/recommendations/{student_id}` - Get job recommendations
+
+### Applications
+- `POST /api/applications` - Apply for job
+- `GET /api/applications/student/{student_id}` - Get student applications
+- `GET /api/applications/recruiter/{recruiter_id}` - Get recruiter applications
+- `PUT /api/applications/{application_id}` - Update application status
+
+### Admin
+- `GET /api/admin/stats` - Get system statistics
+- `GET /api/admin/users` - Get all users
+
+## Database Tables (SQLite)
+
+1. **users** - User accounts (students, recruiters, admin)
+2. **jobs** - Job listings posted by recruiters
+3. **applications** - Job applications from students
+4. **quiz_results** - Student quiz scores
+
+## Notes
+
+- This is a college project - not for production use
+- AI quiz uses Grok API when available, with fallback to sample questions
+- Resume parsing is simplified for demo purposes

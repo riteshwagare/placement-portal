@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Users - NextGen AI Placement Portal</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">NextGen AI</div>
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="dashboard.html">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        Dashboard
+                    </a></li>
+                    <li><a href="users.html" class="active">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        All Users
+                    </a></li>
+                </ul>
+            </nav>
+            <div class="user-menu">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar" style="background: var(--danger);">A</div>
+                    <div class="user-details">
+                        <h4 id="userName">Admin</h4>
+                        <p id="userEmail">admin@portal.com</p>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1>All Users</h1>
+                <p>View and manage all registered users</p>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2>Users</h2>
+                </div>
+                
+                <div id="usersContainer">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        const user = checkAuth();
+        if (user && user.role !== 'admin') {
+            redirectToDashboard(user.role);
+        }
+        
+        if (user) {
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+            
+            loadUsers();
+        }
+        
+        async function loadUsers() {
+            try {
+                const response = await api.getAllUsers();
+                
+                if (response.success) {
+                    renderUsers(response.users);
+                }
+            } catch (error) {
+                document.getElementById('usersContainer').innerHTML = `
+                    <div class="empty-state">
+                        <p>Failed to load users</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function renderUsers(users) {
+            const container = document.getElementById('usersContainer');
+            
+            if (users.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>No users registered yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Joined Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${users.map(u => `
+                                <tr>
+                                    <td>${u.id}</td>
+                                    <td><strong>${u.name}</strong></td>
+                                    <td>${u.email}</td>
+                                    <td><span class="status-badge status-${u.role === 'admin' ? 'rejected' : u.role === 'recruiter' ? 'pending' : 'accepted'}">${u.role}</span></td>
+                                    <td>${new Date(u.created_at).toLocaleDateString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

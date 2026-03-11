@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Jobs - NextGen AI Placement Portal</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">NextGen AI</div>
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="dashboard.html">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        Dashboard
+                    </a></li>
+                    <li><a href="post-job.html">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                        Post Job
+                    </a></li>
+                    <li><a href="jobs.html" class="active">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        My Jobs
+                    </a></li>
+                    <li><a href="applicants.html">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        Applicants
+                    </a></li>
+                </ul>
+            </nav>
+            <div class="user-menu">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">R</div>
+                    <div class="user-details">
+                        <h4 id="userName">Recruiter</h4>
+                        <p id="userEmail">recruiter@email.com</p>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1>My Job Postings</h1>
+                <p>Manage your active job listings</p>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2>Jobs</h2>
+                    <a href="post-job.html" class="btn btn-primary">Post New Job</a>
+                </div>
+                
+                <div id="jobsContainer">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        const user = checkAuth();
+        if (user && user.role !== 'recruiter') {
+            redirectToDashboard(user.role);
+        }
+        
+        if (user) {
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+            
+            loadJobs();
+        }
+        
+        async function loadJobs() {
+            try {
+                const response = await api.getJobs(user.id);
+                
+                if (response.success) {
+                    renderJobs(response.jobs);
+                }
+            } catch (error) {
+                document.getElementById('jobsContainer').innerHTML = `
+                    <div class="empty-state">
+                        <p>Failed to load jobs</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function renderJobs(jobs) {
+            const container = document.getElementById('jobsContainer');
+            
+            if (jobs.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                        <h3>No Jobs Posted</h3>
+                        <p>Create your first job listing</p>
+                        <a href="post-job.html" class="btn btn-primary" style="margin-top: 16px;">Post Job</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Job Title</th>
+                                <th>Company</th>
+                                <th>Skills Required</th>
+                                <th>Salary</th>
+                                <th>Location</th>
+                                <th>Posted Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${jobs.map(job => `
+                                <tr>
+                                    <td><strong>${job.title}</strong></td>
+                                    <td>${job.company}</td>
+                                    <td>
+                                        <div style="max-width: 200px;">
+                                            ${job.skills_required.split(',').slice(0, 3).map(s => 
+                                                `<span class="skill-tag">${s.trim()}</span>`
+                                            ).join('')}
+                                        </div>
+                                    </td>
+                                    <td>${job.salary || '-'}</td>
+                                    <td>${job.location || '-'}</td>
+                                    <td>${new Date(job.created_at).toLocaleDateString()}</td>
+                                    <td><span class="status-badge status-${job.status === 'active' ? 'accepted' : 'pending'}">${job.status}</span></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

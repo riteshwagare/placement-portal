@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - NextGen AI Placement Portal</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">NextGen AI</div>
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="dashboard.html" class="active">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        Dashboard
+                    </a></li>
+                    <li><a href="users.html">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        All Users
+                    </a></li>
+                </ul>
+            </nav>
+            <div class="user-menu">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar" style="background: var(--danger);">A</div>
+                    <div class="user-details">
+                        <h4 id="userName">Admin</h4>
+                        <p id="userEmail">admin@portal.com</p>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1>Admin Dashboard</h1>
+                <p>System overview and monitoring</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalStudents">0</h3>
+                        <p>Total Students</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalRecruiters">0</h3>
+                        <p>Total Recruiters</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="activeJobs">0</h3>
+                        <p>Active Jobs</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="successfulPlacements">0</h3>
+                        <p>Successful Placements</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2>Recent Users</h2>
+                    <a href="users.html" class="btn btn-secondary">View All</a>
+                </div>
+                <div id="recentUsers">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        const user = checkAuth();
+        if (user && user.role !== 'admin') {
+            redirectToDashboard(user.role);
+        }
+        
+        if (user) {
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+            
+            loadStats();
+            loadRecentUsers();
+        }
+        
+        async function loadStats() {
+            try {
+                const response = await api.getAdminStats();
+                
+                if (response.success) {
+                    document.getElementById('totalStudents').textContent = response.stats.total_students;
+                    document.getElementById('totalRecruiters').textContent = response.stats.total_recruiters;
+                    document.getElementById('activeJobs').textContent = response.stats.active_jobs;
+                    document.getElementById('successfulPlacements').textContent = response.stats.successful_placements;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+        
+        async function loadRecentUsers() {
+            try {
+                const response = await api.getAllUsers();
+                
+                if (response.success) {
+                    renderUsers(response.users.slice(0, 10));
+                }
+            } catch (error) {
+                document.getElementById('recentUsers').innerHTML = `
+                    <div class="empty-state">
+                        <p>Failed to load users</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function renderUsers(users) {
+            const container = document.getElementById('recentUsers');
+            
+            if (users.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>No users registered yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${users.map(u => `
+                                <tr>
+                                    <td><strong>${u.name}</strong></td>
+                                    <td>${u.email}</td>
+                                    <td><span class="status-badge status-${u.role === 'admin' ? 'rejected' : u.role === 'recruiter' ? 'pending' : 'accepted'}">${u.role}</span></td>
+                                    <td>${new Date(u.created_at).toLocaleDateString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
