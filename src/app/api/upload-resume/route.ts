@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import pdfParse from 'pdf-parse';
-import mammoth from 'mammoth';
 
 // Comprehensive tech skills database
 const SKILL_KEYWORDS = [
@@ -113,24 +111,41 @@ function extractName(text: string): string {
   return '';
 }
 
-async function extractTextFromPDF(buffer: Buffer): Promise<string> {
-  try {
-    const data = await pdfParse(buffer);
-    return data.text;
-  } catch (error) {
-    console.error('PDF parse error:', error);
-    return '';
+// Simple text extraction - for binary files, try to extract readable text
+function extractTextFromBinary(buffer: Buffer): string {
+  // Try UTF-8 first
+  let text = buffer.toString('utf-8');
+  
+  // For PDF files, extract text between stream markers
+  if (text.includes('%PDF')) {
+    const textMatches: string[] = [];
+    // Extract text from PDF streams (simplified)
+    const regex = /\(([^)]+)\)/g;
+    let match;
+    while ((match = regex.exec(text)) !== null) {
+      if (match[1].length > 2 && /[a-zA-Z]/.test(match[1])) {
+        textMatches.push(match[1]);
+      }
+    }
+    // Also try BT...ET blocks
+    const btBlocks = text.match(/BT[\s\S]*?ET/g) || [];
+    for (const block of btBlocks) {
+      const tj = block.match(/\[([^\]]+)\]TJ/g) || [];
+      for (const t of tj) {
+        const inner = t.match(/\(([^)]+)\)/g) || [];
+        textMatches.push(...inner.map(s => s.slice(1, -1)));
+      }
+    }
+    if (textMatches.length > 0) {
+      text = textMatches.join(' ');
+    }
   }
-}
-
-async function extractTextFromDOCX(buffer: Buffer): Promise<string> {
-  try {
-    const result = await mammoth.extractRawText({ buffer });
-    return result.value;
-  } catch (error) {
-    console.error('DOCX parse error:', error);
-    return '';
-  }
+  
+  // Clean up non-printable characters
+  text = text.replace(/[^\x20-\x7E\n\r\t]/g, ' ');
+  text = text.replace(/\s+/g, ' ').trim();
+  
+  return text;
 }
 
 export async function POST(request: NextRequest) {
@@ -164,12 +179,11 @@ export async function POST(request: NextRequest) {
     
     let content = '';
     
-    if (isPDF) {
-      content = await extractTextFromPDF(buffer);
-    } else if (isDOCX) {
-      content = await extractTextFromDOCX(buffer);
-    } else {
+    if (isTXT) {
       content = new TextDecoder('utf-8').decode(buffer);
+    } else {
+      // For PDF and DOCX, use simplified text extraction
+      content = extractTextFromBinary(buffer);
     }
 
     if (!content || content.trim().length === 0) {
