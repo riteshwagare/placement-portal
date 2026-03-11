@@ -1,5 +1,8 @@
 // API helpers for the placement portal
 
+// Backend URL - change this to your deployed backend URL in production
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+
 export interface UploadResumeResponse {
   email: string;
   phone: string;
@@ -13,26 +16,17 @@ export const resumeAPI = {
     const formData = new FormData();
     formData.append('file', file);
 
-    // Use local Next.js API route
-    const response = await fetch('/api/upload-resume', {
+    // Send resume to external FastAPI backend for parsing
+    const response = await fetch(`${BACKEND_URL}/upload-resume`, {
       method: 'POST',
       body: formData,
     });
     
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to upload resume');
+      const error = await response.json().catch(() => ({ error: 'Failed to upload resume' }));
+      throw new Error(error.error || error.detail || 'Failed to upload resume');
     }
     
-    return response.json();
-  },
-
-  parseResume: async (filePath: string): Promise<UploadResumeResponse> => {
-    const response = await fetch('/api/parse-resume', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ file_path: filePath }),
-    });
     return response.json();
   },
 };
