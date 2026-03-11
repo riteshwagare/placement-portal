@@ -1,17 +1,22 @@
 'use client';
 
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Sidebar from '@/components/Sidebar';
 import { useAuthStore } from '@/lib/store';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 
 export default function RecruiterProfilePage() {
   const router = useRouter();
   const { user } = useAuthStore();
 
+  useEffect(() => {
+    if (!user || user.role !== 'recruiter') {
+      router.push('/login');
+    }
+  }, [user, router]);
+
   if (!user || user.role !== 'recruiter') {
-    router.push('/login');
     return null;
   }
 

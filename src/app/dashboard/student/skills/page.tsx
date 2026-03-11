@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Sidebar from '@/components/Sidebar';
 import { useAuthStore, useSkillStore } from '@/lib/store';
@@ -10,8 +11,13 @@ export default function SkillsPage() {
   const { user } = useAuthStore();
   const { extractedSkills } = useSkillStore();
 
+  useEffect(() => {
+    if (!user || user.role !== 'student') {
+      router.push('/login');
+    }
+  }, [user, router]);
+
   if (!user || user.role !== 'student') {
-    router.push('/login');
     return null;
   }
 

@@ -18,8 +18,13 @@ export default function QuizPage() {
   const [quizStarted, setQuizStarted] = useState(false);
   const [results, setResults] = useState<any>(null);
 
+  useEffect(() => {
+    if (!user || user.role !== 'student') {
+      router.push('/login');
+    }
+  }, [user, router]);
+
   if (!user || user.role !== 'student') {
-    router.push('/login');
     return null;
   }
 

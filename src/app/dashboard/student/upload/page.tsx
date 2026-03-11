@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Sidebar from '@/components/Sidebar';
 import { useAuthStore, useSkillStore } from '@/lib/store';
@@ -19,8 +19,13 @@ export default function UploadResume() {
   const [error, setError] = useState('');
   const [extractedData, setExtractedData] = useState<any>(null);
 
+  useEffect(() => {
+    if (!user || user.role !== 'student') {
+      router.push('/login');
+    }
+  }, [user, router]);
+
   if (!user || user.role !== 'student') {
-    router.push('/login');
     return null;
   }
 
